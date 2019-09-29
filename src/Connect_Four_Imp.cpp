@@ -5,13 +5,13 @@
 using namespace std;
 
 bool gamedone= false ;
-    char p1tok = ' ', p2tok = ' ';
-    string p1name = " ", p2name = " " ;
-    char board[ASIZE] [ASIZE] ;
+char p1tok = ' ', p2tok = ' ';
+string p1name = " ", p2name = " " ;
+char board[ASIZE] [ASIZE] ;
+int col = 0;
+int row = 0;
 
-    int col = 0;
-    int row = 0;
-
+    /** DEFAULT CONSTRUCTOR **/
 Connect_Four :: Connect_Four()
 {
     //initializing array
@@ -25,6 +25,9 @@ Connect_Four :: Connect_Four()
 /** FUCNTION TO CONTROL GAME FLOW **/
 void Connect_Four :: play()
 {
+    Connect_Four();
+    gamedone = false;
+
         cout << "\n Welcome to Connect Four!! " << endl ;
     cout << "\n Player one enter your first name, leave a space and choose your token, it must be a symbol, letter or number : " << endl ;
     cin >>p1name >> p1tok ;
@@ -47,6 +50,7 @@ void Connect_Four :: play()
     }//end while loop to loop the entering of tokens
 
 }//end void function
+
 
 void Connect_Four :: player1_turn()
 {
@@ -93,7 +97,10 @@ void Connect_Four :: player1_turn()
         string name = p1name;
         char tok = p1tok;
 
-        checkwin(tok, name);
+        verticalCheck(tok,name);
+        horizontalCheck(tok,name);
+        diagonalCheck_NE_SW(tok,name);
+        diagonalCheck_NW_SE(tok,name);
 }
 
 void Connect_Four :: player2_turn()
@@ -138,77 +145,51 @@ void Connect_Four :: player2_turn()
 
         string name = p2name;
         char tok = p2tok;
-         checkwin(tok,name);
+
+        verticalCheck(tok,name);
+        horizontalCheck(tok,name);
+        diagonalCheck_NE_SW(tok,name);
+        diagonalCheck_NW_SE(tok,name);
 
 }
 
-/** FUCNTION TO CHECK FOR THE WINNER **/
-void Connect_Four :: checkwin(char tok, string name)
+/** FUCNTIONS TO CHECK FOR THE WINNER **/
+void Connect_Four :: verticalCheck(char tok, string name)
 {
-    for(int i = -1 ; i<5 ; i ++)
+    string nm = name;
+    for(int i = 5; i > 2; i--)
+    {
+        for(int k = -1 ; k<5 ; k++)
         {
-            //First Vertical Check
-            if(board[5][i+1]==tok && board[4][i+1]==tok && board[3][i+1]==tok &&board[2][i+1] == tok)
+            if(board[i][k+1]==tok && board[i-1][k+1]==tok && board[i-2][k+1]==tok &&board[i-3][k+1] == tok)
             {
-                cout << name << "\nYou have won!!" ;
-                system("pause");
-                system("cls");
-                gamedone = true;
-                break;
-            }
-            //Second Vertical Check
-            if(board[4][i+1]==tok && board[3][i+1]==tok && board[2][i+1] ==tok && board[1][i+1] == tok)
-            {
-                cout << name << "\nYou have won!!" ;
-                system("pause");
-                system("cls");
-                gamedone = true;
-                break;
-            }
-            //Third Vertical Check
-
-            if(board[3][i+1]==tok && board[2][i+1]==tok && board[1][i+1]==tok && board[0][i+1] == tok)
-            {
-                cout << name << "\nYou have won!!" ;
-                system("pause");
-                system("cls");
-                gamedone = true;
-                break;
-            }
-
-            //First Horizontal Check
-            if(board[i+1][5] == tok && board[i+1][4]==tok && board[i+1][3]==tok && board[i+1][2] == tok)
-            {
-                cout << name << "\nYou have won!!" ;
-                system("pause");
-                system("cls");
-                gamedone = true;
-                break;
-            }
-
-            //Second Horizontal Check
-            if(board[i+1][4] == tok && board[i+1][3]==tok && board[i+1][2]==tok && board[i+1][1] == tok)
-            {
-                cout << name << "\nYou have won!!" ;
-                system("pause");
-                system("cls");
-                gamedone = true;
-                break;
-            }
-
-            //Third Horizontal Check
-            if(board[i+1][3] == tok && board[i+1][2]==tok && board[i+1][1]==tok && board[i+1][0] == tok)
-            {
-                cout << name << "\nYou have won!!" ;
-                system("pause");
-                system("cls");
-                gamedone = true;
+                gameWon(nm);
                 break;
             }
         }
+    }
+}
 
-        //The Following are Left to Right Diagonal Checks
-        for (int z = 2; z<3 ; z++)
+void Connect_Four :: horizontalCheck(char tok, string name)
+{
+    string nm = name;
+    for(int i = -1; i < 5; i++)
+    {
+        for(int k = 5 ; k > 2 ; k--)
+        {
+            if(board[i+1][k]==tok && board[i+1][k-1]==tok && board[i+1][k-2]==tok &&board[i+1][k-3] == tok)
+            {
+                gameWon(nm);
+                break;
+            }
+        }
+    }
+
+}
+
+void Connect_Four :: diagonalCheck_NE_SW(char tok, string name)
+{
+for (int z = 2; z<3 ; z++)
         {
             //First Diagonal  Check
             if(board[3+z][0+z] == tok && board[2+z][1+z]==tok && board[1+z][2+z]==tok && board[0+z][3+z] == tok)
@@ -258,9 +239,11 @@ void Connect_Four :: checkwin(char tok, string name)
                 break;
             }
         }
-        //The Following are Right to Left DiagonalChecks
+}
 
-        for (int z = 2; z<3 ; z++)
+void Connect_Four :: diagonalCheck_NW_SE(char tok, string name)
+{
+     for (int z = 2; z<3 ; z++)
         {
             //First Diagonal Check
 
@@ -308,6 +291,14 @@ void Connect_Four :: checkwin(char tok, string name)
                 break;
             }
         }
+}
+
+void Connect_Four :: gameWon(string nm)
+{
+    cout << nm << "\nYou have won!!" ;
+    system("pause");
+    system("cls");
+    gamedone = true;
 }
 
 /** FUCNTION TO DISPLAY THE BOARD **/
